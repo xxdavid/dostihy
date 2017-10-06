@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 class Strategy(ABC):
     @abstractmethod
-    def decide_whether_to_buy(self, player, property):
+    def decide_whether_to_buy_property(self, player, property):
         pass
 
     @abstractmethod
@@ -13,7 +13,7 @@ class Strategy(ABC):
 
 class BuyAllStrategy(Strategy):
     """Buys everything it has money for."""
-    def decide_whether_to_buy(self, player, property):
+    def decide_whether_to_buy_property(self, player, property):
         return True
 
     def decide_whether_to_buy_race(self, player, horse):
@@ -22,7 +22,7 @@ class BuyAllStrategy(Strategy):
 
 class BuyNothingStrategy(Strategy):
     """Buys literally nothing. """
-    def decide_whether_to_buy(self, player, property):
+    def decide_whether_to_buy_property(self, player, property):
         return False
 
     def decide_whether_to_buy_race(self, player, horse):
@@ -37,7 +37,7 @@ class CautiousStrategy(Strategy):
     def __init__(self, threshold):
         self.threshold = threshold
 
-    def decide_whether_to_buy(self, player, property):
+    def decide_whether_to_buy_property(self, player, property):
         return (player.money - property.price) > self.threshold
 
     def decide_whether_to_buy_race(self, player, horse):

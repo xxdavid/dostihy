@@ -10,7 +10,7 @@ class Field(ABC):
         pass
 
     @abstractmethod
-    def visit(self, player, board):
+    def visit(self, controller):
         pass
 
     def __str__(self):
@@ -20,20 +20,18 @@ class Field(ABC):
 class Property(Field):
     def __init__(self, name, price):
         self._name = name
-        self.owner = None
+        self.owner_name = None
         self.price = price
 
     @property
     def name(self):
         return self._name
 
-    def visit(self, player, board):
-        if self.owner is None and player.money > self.price:
-            wanna_buy = player.strategy.decide_whether_to_buy(player, self)
+    def visit(self, controller):
+        if self.owner_name is None and controller.has_player_enough_money(self.price):
+            wanna_buy = controller.ask_player_whether_he_wants_property(self)
             if wanna_buy:
-                player.money -= self.price
-                self.owner = player
-                log_event(player, f"bought {self}")
+                controller.buy_property_for_player(self)
             return True
 
 
@@ -45,28 +43,27 @@ class Horse(Property):
         self.races = 0
         self.new_race_price = new_race_price
 
-    def visit(self, player, board):
-        if super().visit(player, board):
+    def visit(self, controller):
+        if super().visit(controller):
             return True
-        if self.owner is not None:
-            if self.owner != player:
+        if self.owner_name is not None:
+            if controller.is_property_owned_by_player(self):
                 admission = self.admissions[self.races]
-                player.money -= admission
-                self.owner.money += admission
-                log_event(player, f"paid {self.owner} admission of {admission} Kč for visiting {self}")
+                controller.pay_admission_to_another_player(
+                    self.owner_name, admission, f"visiting {self}"
+                )
                 return True
             elif self.races < 5:  # owned by the player
-                owns_the_whole_stable = all(
-                    [field.owner == self.owner
-                     for field in board if isinstance(field, Horse) and field.stable == self.stable]
-                )
-                if owns_the_whole_stable and player.money > self.price:
+                owns_the_whole_stable =\
+                    controller.is_whole_stable_owned_by_player(
+                        self.stable, self.owner_name
+                    )
+                has_enough_money = controller.has_player_enough_money(self.price)
+                if owns_the_whole_stable and has_enough_money:
                     wanna_buy_new_race = \
-                        player.strategy.decide_whether_to_buy_race(player, self)
+                        controller.ask_player_whether_he_wants_new_race(self)
                     if wanna_buy_new_race:
-                        player.money -= self.new_race_price
-                        self.races += 1
-                        log_event(player, f"bought a new race for stable {self.stable}")
+                        controller.buy_new_race_for_player(self)
                     return True
         return False
 
@@ -83,17 +80,16 @@ class Trainer(Property):
     def __init__(self, trainer_number):
         super().__init__(f"Trainer {trainer_number}", 4000)
 
-    def visit(self, player, board):
-        if super().visit(player, board):
+    def visit(self, controller):
+        if super().visit(controller):
             return True
-        if self.owner is not None and self.owner != player:
-            number_of_trainers_owned = sum(
-                (isinstance(field, Trainer) and field.owner == self.owner) for field in board
-            )
+        if controller.is_property_owned_by_another_player(self):
+            number_of_trainers_owned =\
+                controller.count_number_of_trainers_owned_by_player(self.owner_name)
             admission = self.ADMISSIONS[number_of_trainers_owned - 1]
-            player.money -= admission
-            self.owner.money += admission
-            log_event(player, f"paid {self.owner} admission of {admission} Kč for a training")
+            controller.pay_admission_to_another_player(
+                self.owner_name, admission, "a training"
+            )
             return True
         return False
 
@@ -103,7 +99,7 @@ class StartField(Field):
     def name(self):
         return "Start"
 
-    def visit(self, player, board):
+    def visit(self, controller):
         pass
 
 
@@ -112,7 +108,7 @@ class ParkingLot(Field):
     def name(self):
         return "Parking Lot"
 
-    def visit(self, player, board):
+    def visit(self, controller):
         pass
 
 

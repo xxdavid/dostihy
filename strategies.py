@@ -31,7 +31,7 @@ class BuyNothingStrategy(Strategy):
 
 class CautiousStrategy(Strategy):
     """
-    Buys offered stuff only if player's amount money
+    Buys offered stuff only if player's amount of money
     won't be below the threshold after the purchase.
     """
     def __init__(self, threshold):

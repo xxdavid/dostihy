@@ -107,6 +107,15 @@ class StartField(Field):
         pass
 
 
+class ParkingLot(Field):
+    @property
+    def name(self):
+        return "Parking Lot"
+
+    def visit(self, player, board):
+        pass
+
+
 initialBoard = [
     StartField(),
     Horse("Fantome", 1200, 0, [40, 200, 600, 1800, 3200, 5000], 1000),
@@ -128,7 +137,7 @@ initialBoard = [
     # Finances
     Horse("Lukava", 3600, 3, [280, 1400, 4000, 11000, 15000, 19000], 2000),
     Horse("Melák", 4000, 3, [320, 1600, 4400, 12000, 16000, 20000], 2000),
-    # Parking lot
+    ParkingLot(),
     Horse("Grifel", 4400, 4, [360, 1800, 5000, 14000, 17000, 21000], 3000),
     # Chance
     Horse("Mohyla", 4400, 4, [360, 1800, 5000, 14000, 17000, 21000], 3000),

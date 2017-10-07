@@ -47,7 +47,7 @@ class Horse(Property):
         if super().visit(controller):
             return True
         if self.owner_name is not None:
-            if controller.is_property_owned_by_player(self):
+            if controller.is_property_owned_by_another_player(self):
                 admission = self.admissions[self.races]
                 controller.pay_admission_to_another_player(
                     self.owner_name, admission, f"visiting {self}"

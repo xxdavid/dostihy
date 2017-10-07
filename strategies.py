@@ -43,3 +43,13 @@ class CautiousStrategy(Strategy):
     def decide_whether_to_buy_race(self, player, horse):
         return (player.money - horse.new_race_price) > self.threshold
 
+
+class HumanStrategy(Strategy):
+    def decide_whether_to_buy_property(self, player, property):
+        key = input(f"Do you want to buy {property} for {property.price} Kč? [Y/n] ")
+        return key == "y" or key is "Y" or key == ""
+
+    def decide_whether_to_buy_race(self, player, horse):
+        key = input(f"Do you want to buy a new race for {horse} for {horse.new_race_price} Kč? [Y/n] ")
+        return key == "y" or key is "Y" or key == ""
+

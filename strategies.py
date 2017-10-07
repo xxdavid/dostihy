@@ -45,6 +45,7 @@ class CautiousStrategy(Strategy):
 
 
 class HumanStrategy(Strategy):
+    """Buys what you tell him to buy."""
     def decide_whether_to_buy_property(self, player, property):
         key = input(f"Do you want to buy {property} for {property.price} Kč? [Y/n] ")
         return key == "y" or key is "Y" or key == ""

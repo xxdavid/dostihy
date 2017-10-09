@@ -131,6 +131,11 @@ class Game:
             receiver.money += amount
             log_event(player, f"paid an admission of {amount} Kč for {purpose}")
 
+        def pay_fee_to_bank(self, amount, purpose):
+            player = self.__game.current_player
+            self.transfer_player_money_to_bank(player, amount)
+            log_event(player, f"paid {amount} Kč for {purpose}")
+
         def is_whole_stable_owned_by_player(self, stable, player_name):
             return all([
                 field.owner_name == player_name

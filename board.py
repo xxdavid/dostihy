@@ -112,12 +112,25 @@ class ParkingLot(Field):
         pass
 
 
+class VeterinaryCheckup(Field):
+    def __init__(self, fee):
+        self.fee = fee
+
+    @property
+    def name(self):
+        return "Veterinary Checkup"
+
+    def visit(self, controller):
+        controller.pay_fee_to_bank(self.fee, "a veterinary checkup")
+
+
+
 initialBoard = [
     StartField(),
     Horse("Fantome", 1200, 0, [40, 200, 600, 1800, 3200, 5000], 1000),
     # Finances
     Horse("Gavora", 1200, 0, [40, 200, 600, 1800, 3200, 5000], 1000),
-    # Veterinary checkup
+    VeterinaryCheckup(500),
     Trainer(1),
     Horse("Lady Anne", 2000, 1, [120, 600, 1800, 5400, 8000, 11000], 1000),
     # Chance
@@ -151,6 +164,6 @@ initialBoard = [
     Trainer(4),
     # Chance
     Horse("Narcius", 7000, 7, [700, 3500, 10000, 22000, 26000, 30000], 4000),
-    # Veterinary checkup
+    VeterinaryCheckup(1000),
     Horse("Napoli", 8000, 7, [1000, 4000, 12000, 28000, 34000, 40000], 4000),
 ]

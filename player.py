@@ -5,6 +5,7 @@ class Player:
         self.money = 30000
         self.position = 0
         self.color = color
+        self.suspended = False
 
     def pay(self, amount, receiver):
         self.money -= amount

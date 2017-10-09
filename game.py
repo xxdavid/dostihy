@@ -2,7 +2,7 @@ from board import initialBoard
 from random import randint, shuffle
 from logger import log, log_event
 from copy import deepcopy
-from board import Horse, Trainer, Property
+from board import Horse, Trainer, Property, SuspensionField
 
 
 def throw_die():
@@ -47,22 +47,35 @@ class Game:
         return False  # the game failed and no one won
 
     def play_turn(self, player):
-        die = throw_die()
-        if die == 6:
-            die += throw_die()
-            # TODO: if die == 12: "Distanc"
-        self.move_player(player, die)
+        if not player.suspended:
+            die = throw_die()
+            if die == 6:
+                die += throw_die()
+            if die == 12:
+                log_event(player, f"threw {die} and that means he will be suspended")
+                return self.controller.move_player_to_suspension_field(False)
+            log_event(player, f"threw {die}")
+            self.move_player(player, die)
+        else:
+            log_event(player, "is suspended")
+            die = throw_die()
+            if die == 6:
+                log(f"{player} threw {die} and is now free again!", player.color)
+                player.suspended = False
+                self.play_turn(player)
+            else:
+                log_event(player, f"threw {die} and is still suspended")
 
-    def move_player(self, player, number_of_steps):
+    def move_player(self, player, number_of_steps, receives_bonus=True):
         player.position += number_of_steps
         if player.position > (len(self.board) - 1):
             player.position -= len(self.board)
-            if self.bank_money > 4000:
+            if self.bank_money > 4000 and receives_bonus:
                 self.bank_money -= 4000
                 player.money += 4000  # bonus for crossing the start field
                 log_event(player, "received a bonus of 4000 Kč for crossing the start field")
         field = self.board[player.position]
-        log_event(player, f"threw {number_of_steps} and moved to {field.name}")
+        log_event(player, f"moved to {field.name}")
         field.visit(self.controller)
 
     def report_state(self):
@@ -156,4 +169,28 @@ class Game:
                 for field in self.__game.board
             )
 
+        def suspend_player(self):
+            player = self.__game.current_player
+            player.suspended = True
+            log_event(player, "suspended")
 
+        def is_player_suspended(self, player_name):
+            player = self.__find_player_with_name(player_name)
+            return player.suspended
+
+        def move_player_to_field(self, field_index, receives_bonus=True):
+            player = self.__game.current_player
+            if player.position <= field_index:
+                steps = field_index - player.position
+            else:
+                steps = len(self.__game.board) - (player.position - field_index)
+            self.__game.move_player(player, steps, receives_bonus)
+
+        def move_player_to_suspension_field(self, receives_bonus=True):
+            suspension_index = [
+                i
+                for i, field
+                in enumerate(self.__game.board)
+                if isinstance(field, SuspensionField)
+            ][0]
+            self.move_player_to_field(suspension_index, receives_bonus)

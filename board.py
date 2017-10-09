@@ -48,7 +48,10 @@ class Horse(Property):
             return True
         if self.owner_name is not None:
             if controller.is_property_owned_by_another_player(self):
-                admission = self.admissions[self.races]
+                if not controller.is_player_suspended(self.owner_name):
+                    admission = self.admissions[self.races]
+                else:
+                    admission = self.admissions[0]
                 controller.pay_admission_to_another_player(
                     self.owner_name, admission, f"visiting {self}"
                 )
@@ -124,6 +127,14 @@ class VeterinaryCheckup(Field):
         controller.pay_fee_to_bank(self.fee, "a veterinary checkup")
 
 
+class SuspensionField(Field):
+    @property
+    def name(self):
+        return "Suspension"
+
+    def visit(self, controller):
+        controller.suspend_player()
+
 
 initialBoard = [
     StartField(),
@@ -136,7 +147,7 @@ initialBoard = [
     # Chance
     Horse("Pasek", 2000, 1, [120, 600, 1800, 5400, 8000, 11000], 1000),
     Horse("Koran", 2400, 1, [160, 800, 2000, 6000, 9000, 12000], 1000),
-    # "Distanc"
+    SuspensionField(),
     Horse("Neklan", 2800, 2, [200, 1000, 3000, 9000, 12500, 15000], 2000),
     # Transit
     Horse("Portlancl", 2800, 2, [200, 1000, 3000, 9000, 12500, 15000], 2000),

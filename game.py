@@ -129,7 +129,7 @@ class Game:
             receiver = self.__find_player_with_name(receiver_name)
             player.money -= amount
             receiver.money += amount
-            log_event(player, f"paid an admission of {amount} Kč for {purpose}")
+            log_event(player, f"paid {receiver_name} an admission of {amount} Kč for {purpose}")
 
         def pay_fee_to_bank(self, amount, purpose):
             player = self.__game.current_player

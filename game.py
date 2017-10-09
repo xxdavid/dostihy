@@ -29,6 +29,7 @@ class Game:
                 if player.money < 0:
                     log_event(player, "BANKRUPTED")
                     self.players.remove(player)
+                    self.bank_money += player.money
                     self.free_losers_properties(player)
                     self.rank.insert(0, player.name)
 

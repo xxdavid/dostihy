@@ -3,29 +3,29 @@ from abc import ABC, abstractmethod
 
 class Strategy(ABC):
     @abstractmethod
-    def decide_whether_to_buy_property(self, player, property):
+    def decide_whether_to_buy_property(self, controller, property):
         pass
 
     @abstractmethod
-    def decide_whether_to_buy_race(self, player, horse):
+    def decide_whether_to_buy_race(self, controller, horse):
         pass
 
 
 class BuyAllStrategy(Strategy):
     """Buys everything it has money for."""
-    def decide_whether_to_buy_property(self, player, property):
+    def decide_whether_to_buy_property(self, controller, property):
         return True
 
-    def decide_whether_to_buy_race(self, player, horse):
+    def decide_whether_to_buy_race(self, controller, horse):
         return True
 
 
 class BuyNothingStrategy(Strategy):
     """Buys literally nothing. """
-    def decide_whether_to_buy_property(self, player, property):
+    def decide_whether_to_buy_property(self, controller, property):
         return False
 
-    def decide_whether_to_buy_race(self, player, horse):
+    def decide_whether_to_buy_race(self, controller, horse):
         return False
 
 
@@ -37,20 +37,22 @@ class CautiousStrategy(Strategy):
     def __init__(self, threshold):
         self.threshold = threshold
 
-    def decide_whether_to_buy_property(self, player, property):
-        return (player.money - property.price) > self.threshold
+    def decide_whether_to_buy_property(self, controller, property):
+        return (controller.player_money - property.price) > self.threshold
 
-    def decide_whether_to_buy_race(self, player, horse):
-        return (player.money - horse.new_race_price) > self.threshold
+    def decide_whether_to_buy_race(self, controller, horse):
+        return (controller.player_money - horse.new_race_price) > self.threshold
+    def decide_whether_to_buy_property(self, player, property):
+
 
 
 class HumanStrategy(Strategy):
     """Buys what you tell him to buy."""
-    def decide_whether_to_buy_property(self, player, property):
+    def decide_whether_to_buy_property(self, controller, property):
         key = input(f"Do you want to buy {property} for {property.price} Kč? [Y/n] ")
         return key == "y" or key is "Y" or key == ""
 
-    def decide_whether_to_buy_race(self, player, horse):
+    def decide_whether_to_buy_race(self, controller, horse):
         key = input(f"Do you want to buy a new race for {horse} for {horse.new_race_price} Kč? [Y/n] ")
         return key == "y" or key is "Y" or key == ""
 

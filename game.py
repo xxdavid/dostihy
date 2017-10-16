@@ -22,7 +22,7 @@ class Game:
         shuffle(self.players)
 
     def play(self):
-        for self.round in range(1, 1000):
+        for self.round in range(1, 500):
             for player in self.players:
                 self.current_player = player
                 self.play_turn(player)

@@ -50,9 +50,9 @@ class HumanStrategy(Strategy):
     """Buys what you tell him to buy."""
     def decide_whether_to_buy_property(self, controller, property):
         key = input(f"Do you want to buy {property} for {property.price} Kč? [Y/n] ")
-        return key == "y" or key is "Y" or key == ""
+        return key == "y" or key == "Y" or key == ""
 
     def decide_whether_to_buy_race(self, controller, horse):
         key = input(f"Do you want to buy a new race for {horse} for {horse.new_race_price} Kč? [Y/n] ")
-        return key == "y" or key is "Y" or key == ""
+        return key == "y" or key == "Y" or key == ""
 

@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from board import Horse
 
 
 class Strategy(ABC):
@@ -44,6 +45,22 @@ class CautiousStrategy(Strategy):
         return (controller.player_money - horse.new_race_price) > self.threshold
 
 
+
+
+class NoCheapHorsesStrategy(Strategy):
+    """
+    Buys anything it can afford (= Cautious(2000))
+    except the first two horses (the two can be bought only after round 10).
+    """
+    def decide_whether_to_buy_property(self, controller, property):
+        return not (
+            isinstance(property, Horse)
+            and controller.current_field_index < 3
+            and controller.current_round <= 10
+        ) and controller.player_money > 2000
+
+    def decide_whether_to_buy_race(self, controller, horse):
+        return True
 
 class HumanStrategy(Strategy):
     """Buys what you tell him to buy."""

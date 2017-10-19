@@ -14,6 +14,7 @@ class Strategy(ABC):
 
 class BuyAllStrategy(Strategy):
     """Buys everything it has money for."""
+
     def decide_whether_to_buy_property(self, controller, property):
         return True
 
@@ -23,6 +24,7 @@ class BuyAllStrategy(Strategy):
 
 class BuyNothingStrategy(Strategy):
     """Buys literally nothing. """
+
     def decide_whether_to_buy_property(self, controller, property):
         return False
 
@@ -35,6 +37,7 @@ class CautiousStrategy(Strategy):
     Buys offered stuff only if player's amount of money
     won't be below the threshold after the purchase.
     """
+
     def __init__(self, threshold):
         self.threshold = threshold
 
@@ -45,13 +48,12 @@ class CautiousStrategy(Strategy):
         return (controller.player_money - horse.new_race_price) > self.threshold
 
 
-
-
 class NoCheapHorsesStrategy(Strategy):
     """
     Buys anything it can afford (= Cautious(2000))
     except the first two horses (the two can be bought only after round 10).
     """
+
     def decide_whether_to_buy_property(self, controller, property):
         return not (
             isinstance(property, Horse)
@@ -62,8 +64,10 @@ class NoCheapHorsesStrategy(Strategy):
     def decide_whether_to_buy_race(self, controller, horse):
         return True
 
+
 class HumanStrategy(Strategy):
     """Buys what you tell him to buy."""
+
     def decide_whether_to_buy_property(self, controller, property):
         key = input(f"Do you want to buy {property} for {property.price} Kč? [Y/n] ")
         return key == "y" or key == "Y" or key == ""
@@ -71,4 +75,3 @@ class HumanStrategy(Strategy):
     def decide_whether_to_buy_race(self, controller, horse):
         key = input(f"Do you want to buy a new race for {horse} for {horse.new_race_price} Kč? [Y/n] ")
         return key == "y" or key == "Y" or key == ""
-

@@ -42,5 +42,10 @@ for combination in combinations:
 
 print(f"The rank for {number_of_games} games ({number_of_games // set_length } combinations):")
 
+output_file = open("./stats.txt", "w")
+
 for w in sorted(wins, key=wins.get, reverse=True):
     print(f"{w}: {wins[w]}")
+    output_file.write(f"{w} {wins[w]}\n")
+
+output_file.close()

@@ -106,11 +106,11 @@ class Game:
         def ask_player_whether_he_wants_property(self, property):
             # sorry, women and gender neutral players
             player = self.__game.current_player
-            return player.strategy.decide_whether_to_buy_property(player, property)
+            return player.strategy.decide_whether_to_buy_property(self, property)
 
         def ask_player_whether_he_wants_new_race(self, horse):
             player = self.__game.current_player
-            return player.strategy.decide_whether_to_buy_race(player, horse)
+            return player.strategy.decide_whether_to_buy_race(self, horse)
 
         def buy_property_for_player(self, property):
             player = self.__game.current_player

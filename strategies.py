@@ -42,7 +42,6 @@ class CautiousStrategy(Strategy):
 
     def decide_whether_to_buy_race(self, controller, horse):
         return (controller.player_money - horse.new_race_price) > self.threshold
-    def decide_whether_to_buy_property(self, player, property):
 
 
 

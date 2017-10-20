@@ -21,9 +21,9 @@ print(names, ranks)
 
 
 fig, ax = plt.subplots()
-width = 0.75
+height = 0.75
 ind = np.arange(len(ranks))
-ax.barh(ind, ranks, width, color="blue")
+ax.barh(ind, ranks, height, color="blue")
 ax.set_yticks(ind)
 ax.set_yticklabels(names, minor=False)
 plt.tight_layout()

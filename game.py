@@ -103,6 +103,14 @@ class Game:
         def player_money(self):
             return self.__game.current_player.money
 
+        @property
+        def current_field_index(self):
+            return self.__game.current_player.position
+
+        @property
+        def current_round(self):
+            return self.__game.round
+
         def __find_player_with_name(self, name):
             for player in self.__game.players:
                 if player.name == name:

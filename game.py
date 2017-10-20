@@ -103,6 +103,11 @@ class Game:
         def player_money(self):
             return self.__game.current_player.money
 
+        def __find_player_with_name(self, name):
+            for player in self.__game.players:
+                if player.name == name:
+                    return player
+
         def ask_player_whether_he_wants_property(self, property):
             # sorry, women and gender neutral players
             player = self.__game.current_player
@@ -112,43 +117,12 @@ class Game:
             player = self.__game.current_player
             return player.strategy.decide_whether_to_buy_race(self, horse)
 
-        def buy_property_for_player(self, property):
-            player = self.__game.current_player
-            price = property.price
-            self.transfer_player_money_to_bank(player, price)
-            property.owner_name = player.name
-            log_event(player, f"bought {property}")
-
-        def buy_new_race_for_player(self, horse):
-            player = self.__game.current_player
-            price = horse.new_race_price
-            self.transfer_player_money_to_bank(player, price)
-            horse.races += 1
-            log_event(player, f"bought a new race for {horse}")
-
         def transfer_player_money_to_bank(self, player, amount):
             player.money -= amount
             self.__game.bank_money += amount
 
         def is_property_owned_by_player(self, property):
             return property.owner_name == self.__game.current_player.name
-
-        def __find_player_with_name(self, name):
-            for player in self.__game.players:
-                if player.name == name:
-                    return player
-
-        def pay_admission_to_another_player(self, receiver_name, amount, purpose):
-            player = self.__game.current_player
-            receiver = self.__find_player_with_name(receiver_name)
-            player.money -= amount
-            receiver.money += amount
-            log_event(player, f"paid {receiver_name} an admission of {amount} Kč for {purpose}")
-
-        def pay_fee_to_bank(self, amount, purpose):
-            player = self.__game.current_player
-            self.transfer_player_money_to_bank(player, amount)
-            log_event(player, f"paid {amount} Kč for {purpose}")
 
         def is_whole_stable_owned_by_player(self, stable, player_name):
             return all([
@@ -170,11 +144,6 @@ class Game:
                 for field in self.__game.board
             )
 
-        def suspend_player(self):
-            player = self.__game.current_player
-            player.suspended = True
-            log_event(player, "suspended")
-
         def is_player_suspended(self, player_name):
             player = self.__find_player_with_name(player_name)
             return player.suspended
@@ -195,3 +164,34 @@ class Game:
                 if isinstance(field, SuspensionField)
             ][0]
             self.move_player_to_field(suspension_index, receives_bonus)
+
+        def buy_property_for_player(self, property):
+            player = self.__game.current_player
+            price = property.price
+            self.transfer_player_money_to_bank(player, price)
+            property.owner_name = player.name
+            log_event(player, f"bought {property}")
+
+        def buy_new_race_for_player(self, horse):
+            player = self.__game.current_player
+            price = horse.new_race_price
+            self.transfer_player_money_to_bank(player, price)
+            horse.races += 1
+            log_event(player, f"bought a new race for {horse}")
+
+        def pay_admission_to_another_player(self, receiver_name, amount, purpose):
+            player = self.__game.current_player
+            receiver = self.__find_player_with_name(receiver_name)
+            player.money -= amount
+            receiver.money += amount
+            log_event(player, f"paid {receiver_name} an admission of {amount} Kč for {purpose}")
+
+        def pay_fee_to_bank(self, amount, purpose):
+            player = self.__game.current_player
+            self.transfer_player_money_to_bank(player, amount)
+            log_event(player, f"paid {amount} Kč for {purpose}")
+
+        def suspend_player(self):
+            player = self.__game.current_player
+            player.suspended = True
+            log_event(player, "suspended")

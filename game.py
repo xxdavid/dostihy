@@ -45,7 +45,7 @@ class Game:
 
             self.report_state()
 
-        return False  # the game failed and no one won
+        return False  # the game failed and no one won -> tie
 
     def play_turn(self, player):
         if not player.suspended:

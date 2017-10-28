@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from game import Game
 from player import Player
-from strategies import BuyAllStrategy, BuyNothingStrategy, CautiousStrategy, NoCheapHorsesStrategy
+from strategies import BuyAllStrategy, BuyNothingStrategy, CautiousStrategy, NoCheapHorsesStrategy, ScoreStrategy
 import itertools
 import logger
 
@@ -20,6 +20,7 @@ strategies = [
     [CautiousStrategy(15000), "Cautious15000"],
     [CautiousStrategy(20000), "Cautious20000"],
     [NoCheapHorsesStrategy(), "NoCheapHorses"],
+    [ScoreStrategy(), "ScoreStrategy"],
 ]
 
 number_of_players = 3

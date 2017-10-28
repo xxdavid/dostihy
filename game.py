@@ -132,11 +132,28 @@ class Game:
         def is_property_owned_by_player(self, property):
             return property.owner_name == self.__game.current_player.name
 
+        def number_of_horses_of_stable_owned_by_player(self, stable, player_name):
+            return len([
+                field for field in self.__game.board
+                if isinstance(field, Horse) and field.stable == stable\
+                    and field.owner_name == player_name
+            ])
+
+        def number_of_horses_of_stable(self, stable):
+            return len([
+                field for field in self.__game.board
+                if isinstance(field, Horse) and field.stable == stable
+            ])
+
         def is_whole_stable_owned_by_player(self, stable, player_name):
-            return all([
+            return self.number_of_horses_of_stable_owned_by_player(stable, player_name)\
+                == self.number_of_horses_of_stable(stable)
+
+        def number_of_trainers_already_owned_by_player(self, player_name):
+            return len([
                 field.owner_name == player_name
                 for field in self.__game.board
-                if isinstance(field, Horse) and field.stable == stable
+                if isinstance(field, Trainer) and field.owner_name == player_name
             ])
 
         def has_player_enough_money(self, amount):

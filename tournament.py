@@ -1,24 +1,24 @@
 #!/usr/bin/env python3
 from game import Game
 from player import Player
-from strategies import BuyAllStrategy, BuyNothingStrategy, CautiousStrategy, NoCheapHorsesStrategy, ScoreStrategy
+from strategies import ThresholdStrategy, NoCheapHorsesStrategy, ScoreStrategy
 import itertools
 import logger
 
 logger.enabled = False
 
 strategies = [
-    [BuyNothingStrategy(), "BuyNothing"],
-    [BuyAllStrategy(), "BuyAll"],
-    [CautiousStrategy(500), "Cautious500"],
-    [CautiousStrategy(1000), "Cautious1000"],
-    [CautiousStrategy(2000), "Cautious2000"],
-    [CautiousStrategy(3000), "Cautious3000"],
-    [CautiousStrategy(4000), "Cautious4000"],
-    [CautiousStrategy(5000), "Cautious5000"],
-    [CautiousStrategy(10000), "Cautious10000"],
-    [CautiousStrategy(15000), "Cautious15000"],
-    [CautiousStrategy(20000), "Cautious20000"],
+    [ThresholdStrategy(0), "Threshold0"],
+    [ThresholdStrategy(500), "Threshold500"],
+    [ThresholdStrategy(1000), "Threshold1000"],
+    [ThresholdStrategy(2000), "Threshold2000"],
+    [ThresholdStrategy(3000), "Threshold3000"],
+    [ThresholdStrategy(4000), "Threshold4000"],
+    [ThresholdStrategy(5000), "Threshold5000"],
+    [ThresholdStrategy(10000), "Threshold10000"],
+    [ThresholdStrategy(15000), "Threshold15000"],
+    [ThresholdStrategy(20000), "Threshold20000"],
+    [ThresholdStrategy(60000), "Threshold60000"],
     [NoCheapHorsesStrategy(), "NoCheapHorses"],
     [ScoreStrategy(), "ScoreStrategy"],
 ]

@@ -12,27 +12,7 @@ class Strategy(ABC):
         pass
 
 
-class BuyAllStrategy(Strategy):
-    """Buys everything it has money for."""
-
-    def decide_whether_to_buy_property(self, controller, property):
-        return True
-
-    def decide_whether_to_buy_race(self, controller, horse):
-        return True
-
-
-class BuyNothingStrategy(Strategy):
-    """Buys literally nothing. """
-
-    def decide_whether_to_buy_property(self, controller, property):
-        return False
-
-    def decide_whether_to_buy_race(self, controller, horse):
-        return False
-
-
-class CautiousStrategy(Strategy):
+class ThresholdStrategy(Strategy):
     """
     Buys offered stuff only if player's amount of money
     won't be below the threshold after the purchase.

@@ -4,6 +4,7 @@ from player import Player
 from strategies import ThresholdStrategy, NoCheapHorsesStrategy, ScoreStrategy
 import itertools
 import logger
+import math
 
 logger.enabled = False
 
@@ -28,11 +29,25 @@ set_length = 10
 
 combinations = itertools.combinations(strategies, number_of_players)
 
+number_of_games = math.factorial(len(strategies))\
+                  // math.factorial(number_of_players)\
+                  // math.factorial(len(strategies) - number_of_players)\
+                  * set_length
+
+number_of_games_of_one_player = math.factorial(len(strategies) - 1) \
+                  // math.factorial(number_of_players - 1) \
+                  // math.factorial(len(strategies) - number_of_players) \
+                  * set_length
+
+number_of_games_by_players = {}
 wins = {}
+
 for strategy in strategies:
+    number_of_games_by_players[strategy[1]] = 0
     wins[strategy[1]] = 0
 
-number_of_games = 0
+ties = 0
+
 for combination in combinations:
     for i in range(set_length):
         players = [Player(player[1], player[0]) for player in combination]
@@ -40,14 +55,19 @@ for combination in combinations:
         rank = game.play()
         if rank:
             wins[rank[0]] += 1
-        number_of_games += 1
+            for player in rank:
+                number_of_games_by_players[player] += 1
+        else:
+            ties += 1
 
-print(f"The rank for {number_of_games} games ({number_of_games // set_length } combinations):")
+print(f"The rank for {number_of_games} games ({number_of_games // set_length} combinations, {ties} ties):")
 
 output_file = open("./stats.txt", "w")
 
-for w in sorted(wins, key=wins.get, reverse=True):
-    print(f"{w}: {wins[w]}")
-    output_file.write(f"{w} {wins[w]}\n")
+for player in sorted(wins, key=wins.get, reverse=True):
+    score = wins[player]
+    game_played = number_of_games_by_players[player]
+    print(f"{player}: {score} ({100 * score // game_played}%, {game_played} games)")
+    output_file.write(f"{player} {score} {game_played}\n")
 
 output_file.close()

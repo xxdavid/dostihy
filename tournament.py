@@ -67,7 +67,7 @@ class Tournament:
         print("Starting to play.")
 
     def print_results(self):
-        print("The tournament has ended.")
+        print("\nThe tournament has ended.")
         ties_percentage = 100 * self.number_of_ties // self.total_number_of_games
         print(f"There were {self.number_of_ties} ties in total,"
               f"that's {ties_percentage}% of the all games.")

@@ -9,23 +9,28 @@ with open("./stats.txt") as f:
 
 lines = [x.strip() for x in lines]
 
-names = []
+combinations = int(lines.pop(0))
+set_length = int(lines.pop(0))
+games_of_one_player = int(lines.pop(0))
+lines.pop(0)  # blank newline
+
 ranks = []
 
 for line in lines:
     line_parts = line.split(" ")
-    names.append(line_parts[0])
-    ranks.append(line_parts[1])
+    ranks.append((line_parts[0], int(line_parts[1]) / int(line_parts[2]) * 100))
 
-print(names, ranks)
+ranks.sort(key=lambda x: x[1], reverse=True)
 
+[names, percentage] = list(zip(*ranks))
 
 fig, ax = plt.subplots()
-height = 0.75
-ind = np.arange(len(ranks))
-ax.barh(ind, ranks, height, color="blue")
-ax.set_yticks(ind)
-ax.set_yticklabels(names, minor=False)
+ind = np.arange(len(names))  # compute y positions
+width = .8
+ax.bar(ind, percentage, width=width)
+plt.xticks(ind - width / 2, names, rotation=70)
+plt.xlabel("Strategies")
+plt.ylabel("Won games [%]")
+plt.title(f"Ranks in a tournament of {combinations * set_length} games ({combinations} combinations)")
 plt.tight_layout()
-plt.gca().invert_yaxis()
 plt.show()

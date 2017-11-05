@@ -52,6 +52,11 @@ class Plotter(ABC):
     def title(self):
         pass
 
+    @property
+    @abstractmethod
+    def name(self):
+        pass
+
     @abstractmethod
     def init_plot(self):
         pass
@@ -65,7 +70,8 @@ class Plotter(ABC):
 
         plt.tight_layout()
 
-        plt.show()
+        plt.savefig(f"charts/{self.name}.png")
+        plt.clf()
 
 
 class BarPlotter(Plotter):
@@ -101,6 +107,10 @@ class LinePlotter(Plotter):
 
 class WinsPlotter(BarPlotter):
     @property
+    def name(self):
+        return "wins"
+
+    @property
     def title(self):
         return f"Ranks in a tournament of {self.total_games} games" \
                f" ({Plotter.combinations} combinations)"
@@ -120,6 +130,10 @@ class WinsPlotter(BarPlotter):
 
 
 class TiesPlotter(BarPlotter):
+    @property
+    def name(self):
+        return "ties"
+
     @property
     def title(self):
         return f"Tied games ({self.total_games} games in total)"
@@ -142,6 +156,10 @@ class TiesPlotter(BarPlotter):
 
 
 class ThresholdPlotter(LinePlotter):
+    @property
+    def name(self):
+        return "threshold"
+
     @property
     def title(self):
         return f"Ranks of Threshold strategies ({self.total_games} games)"

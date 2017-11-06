@@ -71,6 +71,7 @@ class Plotter(ABC):
         plt.tight_layout()
 
         plt.savefig(f"charts/{self.name}.png")
+        plt.savefig(f"charts/{self.name}.svg")
         plt.clf()
 
 

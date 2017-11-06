@@ -74,17 +74,17 @@ class ScoreStrategy(Strategy):
         if isinstance(property, Horse):
             horse_efficiency = property.admissions[0] / property.price
             horse_efficiency_scores = {
-                1.25: 3,
-                1: 2.5,
-                .8: 1,
-                .7: .5,
-                .5: 0,
-                .3: -2,
+                .125: 3,
+                .1: 2.5,
+                .08: 1,
+                .07: .5,
+                .05: 0,
+                .03: -1,
                 0: -3
             }
             score += self.__determine_score(horse_efficiency_scores, horse_efficiency)
 
-            main_race_efficiency = property.admissions[5] / 5 * property.new_race_price
+            main_race_efficiency = property.admissions[5] / 5 / property.new_race_price
             race_efficiency_scores = {
                 2.4: 5,
                 2.2: 4,
@@ -153,7 +153,7 @@ class ScoreStrategy(Strategy):
         }
         score += self.__determine_score(money_scores, remaining_money)
 
-        main_race_efficiency = horse.admissions[5] / 5 * horse.new_race_price
+        main_race_efficiency = horse.admissions[5] / 5 / horse.new_race_price
         race_efficiency_scores = {
             2.4: 5,
             2.2: 4,

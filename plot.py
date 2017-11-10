@@ -89,6 +89,7 @@ class BarPlotter(Plotter):
         width = .8
         plt.bar(ind, y, width=width)
         plt.xticks(ind - width / 2, x, rotation=70)
+        plt.tick_params(bottom='off')
 
 
 class LinePlotter(Plotter):

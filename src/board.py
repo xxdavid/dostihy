@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 
-from game import Game
 
 
 class Field(ABC):
@@ -14,7 +13,7 @@ class Field(ABC):
         pass
 
     @abstractmethod
-    def visit(self, controller: Game.Controller) -> bool:
+    def visit(self, controller) -> bool:
         """
         Visit this field by the current player and perform associated actions.
         (i.e. paying an admission.)
@@ -41,7 +40,7 @@ class Property(Field):
     def name(self):
         return self._name
 
-    def visit(self, controller: Game.Controller) -> bool:
+    def visit(self, controller) -> bool:
         if self.owner_name is None and controller.has_player_enough_money(self.price):
             wanna_buy = controller.ask_player_whether_he_wants_property(self)
             if wanna_buy:
@@ -67,7 +66,7 @@ class Horse(Property):
         self.races = 0
         self.new_race_price = new_race_price
 
-    def visit(self, controller: Game.Controller) -> bool:
+    def visit(self, controller) -> bool:
         if super().visit(controller):
             return True
         if self.owner_name is not None:
@@ -113,7 +112,7 @@ class Trainer(Property):
     def __init__(self, trainer_number: int):
         super().__init__(f"Trainer {trainer_number}", 4000)
 
-    def visit(self, controller: Game.Controller) -> bool:
+    def visit(self, controller) -> bool:
         if super().visit(controller):
             return True
         if controller.is_property_owned_by_another_player(self):
@@ -167,7 +166,7 @@ class VeterinaryCheckup(Field):
     def name(self):
         return "Veterinary Checkup"
 
-    def visit(self, controller: Game.Controller) -> bool:
+    def visit(self, controller) -> bool:
         controller.pay_fee_to_bank(self.fee, "a veterinary checkup")
         return True
 
@@ -182,7 +181,7 @@ class SuspensionField(Field):
     def name(self):
         return "Suspension"
 
-    def visit(self, controller: Game.Controller) -> bool:
+    def visit(self, controller) -> bool:
         controller.suspend_player()
         return True
 

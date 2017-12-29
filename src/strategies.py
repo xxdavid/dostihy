@@ -1,16 +1,15 @@
 from abc import ABC, abstractmethod
 from board import Horse, Trainer, Property
-from game import Game
 
 
 class Strategy(ABC):
     @abstractmethod
-    def decide_whether_to_buy_property(self, controller: Game.Controller,
+    def decide_whether_to_buy_property(self, controller,
                                        property: Property) -> bool:
         pass
 
     @abstractmethod
-    def decide_whether_to_buy_race(self, controller: Game.Controller,
+    def decide_whether_to_buy_race(self, controller,
                                    horse: Horse) -> bool:
         pass
 
@@ -24,11 +23,11 @@ class ThresholdStrategy(Strategy):
     def __init__(self, threshold):
         self.threshold = threshold
 
-    def decide_whether_to_buy_property(self, controller: Game.Controller,
+    def decide_whether_to_buy_property(self, controller,
                                        property: Property) -> bool:
         return (controller.player_money - property.price) > self.threshold
 
-    def decide_whether_to_buy_race(self, controller: Game.Controller,
+    def decide_whether_to_buy_race(self, controller,
                                    horse: Horse) -> bool:
         return (controller.player_money - horse.new_race_price) > self.threshold
 
@@ -39,7 +38,7 @@ class NoCheapHorsesStrategy(Strategy):
     except the first two horses (the two can be bought only after round 10).
     """
 
-    def decide_whether_to_buy_property(self, controller: Game.Controller,
+    def decide_whether_to_buy_property(self, controller,
                                        property: Property) -> bool:
         return not (
                 isinstance(property, Horse)
@@ -47,7 +46,7 @@ class NoCheapHorsesStrategy(Strategy):
                 and controller.current_round <= 10
         ) and controller.player_money > 2000
 
-    def decide_whether_to_buy_race(self, controller: Game.Controller,
+    def decide_whether_to_buy_race(self, controller,
                                    horse: Horse) -> bool:
         return True
 
@@ -59,7 +58,7 @@ class ScoreStrategy(Strategy):
     meets them. If the score is positive, the property is bought.
     """
 
-    def decide_whether_to_buy_property(self, controller: Game.Controller,
+    def decide_whether_to_buy_property(self, controller,
                                        property: Property) -> bool:
         score = 0
         player_name = controller.player_name
@@ -143,7 +142,7 @@ class ScoreStrategy(Strategy):
 
         return score > 0
 
-    def decide_whether_to_buy_race(self, controller: Game.Controller,
+    def decide_whether_to_buy_race(self, controller,
                                    horse: Horse) -> bool:
         score = 0
         remaining_money = controller.player_money - horse.price
@@ -191,12 +190,12 @@ class ScoreStrategy(Strategy):
 class HumanStrategy(Strategy):
     """Buys what you tell him to buy."""
 
-    def decide_whether_to_buy_property(self, controller: Game.Controller,
+    def decide_whether_to_buy_property(self, controller,
                                        property: Property) -> bool:
         key = input(f"Do you want to buy {property} for {property.price} Kč? [Y/n] ")
         return key == "y" or key == "Y" or key == ""
 
-    def decide_whether_to_buy_race(self, controller: Game.Controller,
+    def decide_whether_to_buy_race(self, controller,
                                    horse: Horse) -> bool:
         key = input(f"Do you want to buy a new race for {horse} for {horse.new_race_price} Kč? [Y/n] ")
         return key == "y" or key == "Y" or key == ""

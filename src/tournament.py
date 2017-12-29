@@ -84,7 +84,7 @@ class Tournament:
             print(f"{player}: {score} ({100 * score // game_played}%, {game_played} non-tie games)")
 
     def write_results_to_file(self):
-        file = open("./stats.txt", "w")
+        file = open("../stats.txt", "w")
 
         file.write(str(self.number_of_combinations) + "\n")
         file.write(str(self.set_length) + "\n")

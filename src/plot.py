@@ -23,7 +23,7 @@ class Plotter(ABC):
         if Plotter.ranks is not None:
             return
 
-        with open("./stats.txt") as f:
+        with open("../stats.txt") as f:
             lines = f.readlines()
 
         lines = [x.strip() for x in lines]
@@ -78,8 +78,8 @@ class Plotter(ABC):
 
         plt.tight_layout()
 
-        plt.savefig(f"charts/{self.name}.png")
-        plt.savefig(f"charts/{self.name}.svg")
+        plt.savefig(f"../charts/{self.name}.png")
+        plt.savefig(f"../charts/{self.name}.svg")
         plt.clf()
 
 

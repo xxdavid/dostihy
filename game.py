@@ -3,6 +3,7 @@ from random import randint, shuffle
 from logger import log, log_event
 from copy import deepcopy
 from board import Horse, Trainer, Property, SuspensionField
+from player import Player
 
 
 def throw_die():
@@ -10,6 +11,12 @@ def throw_die():
 
 
 class Game:
+    """
+    Class representing the whole game.
+    It holds the players, board and bank.
+    It controls the game and all the main logic is implemented here.
+    """
+
     def __init__(self, players):
         self.players = players
         self.board = deepcopy(initialBoard)
@@ -47,7 +54,7 @@ class Game:
 
         return False  # the game failed and no one won -> tie
 
-    def play_turn(self, player):
+    def play_turn(self, player: Player):
         if not player.suspended:
             die = throw_die()
             if die == 6:
@@ -67,7 +74,7 @@ class Game:
             else:
                 log_event(player, f"threw {die} and is still suspended")
 
-    def move_player(self, player, number_of_steps, receives_bonus=True):
+    def move_player(self, player: Player, number_of_steps: int, receives_bonus: bool = True):
         player.position += number_of_steps
         if player.position > (len(self.board) - 1):
             player.position -= len(self.board)
@@ -84,7 +91,7 @@ class Game:
         state_report += ", ".join(map(lambda p: f"{p}: {'{:,}'.format(p.money)} Kč", self.players))
         log(state_report + "\n", "white")
 
-    def free_losers_properties(self, loser):
+    def free_losers_properties(self, loser: Player):
         for field in self.board:
             if isinstance(field, Property) and field.owner_name == loser.name:
                 field.owner_name = None
@@ -92,88 +99,94 @@ class Game:
                     field.races = 0
 
     class Controller:
-        def __init__(self, game):
-            self.__game = game
+        """
+        The game controller.
+        This class was designed as a gate for the "outer world" for interacting
+        with players and fields, preventing it from having a direct access to them.
+        """
 
-        @property
-        def player_name(self):
-            return self.__game.current_player.name
+        def __init__(self, game: 'Game'):
+            self.__game: 'Game' = game
 
-        @property
-        def player_money(self):
-            return self.__game.current_player.money
-
-        @property
-        def current_field_index(self):
-            return self.__game.current_player.position
-
-        @property
-        def current_round(self):
-            return self.__game.round
-
-        def __find_player_with_name(self, name):
+        def __find_player_with_name(self, name: str) -> Player:
             for player in self.__game.players:
                 if player.name == name:
                     return player
 
-        def ask_player_whether_he_wants_property(self, property):
+        @property
+        def player_name(self) -> str:
+            return self.__game.current_player.name
+
+        @property
+        def player_money(self) -> int:
+            return self.__game.current_player.money
+
+        @property
+        def current_field_index(self) -> int:
+            return self.__game.current_player.position
+
+        @property
+        def current_round(self) -> int:
+            return self.__game.round
+
+        def ask_player_whether_he_wants_property(self, property: Property) -> bool:
             # sorry, women and gender neutral players
             player = self.__game.current_player
             return player.strategy.decide_whether_to_buy_property(self, property)
 
-        def ask_player_whether_he_wants_new_race(self, horse):
+        def ask_player_whether_he_wants_new_race(self, horse: Horse) -> bool:
             player = self.__game.current_player
             return player.strategy.decide_whether_to_buy_race(self, horse)
 
-        def transfer_player_money_to_bank(self, player, amount):
+        def transfer_player_money_to_bank(self, player: Player, amount: int):
             player.money -= amount
             self.__game.bank_money += amount
 
-        def is_property_owned_by_player(self, property):
+        def is_property_owned_by_player(self, property: Property) -> bool:
             return property.owner_name == self.__game.current_player.name
 
-        def number_of_horses_of_stable_owned_by_player(self, stable, player_name):
+        def number_of_horses_of_stable_owned_by_player(self, stable, player_name: str) -> int:
             return len([
                 field for field in self.__game.board
-                if isinstance(field, Horse) and field.stable == stable\
-                    and field.owner_name == player_name
+                if isinstance(field, Horse) and field.stable == stable
+                and field.owner_name == player_name
             ])
 
-        def number_of_horses_of_stable(self, stable):
+        def number_of_horses_of_stable(self, stable: int) -> int:
             return len([
                 field for field in self.__game.board
                 if isinstance(field, Horse) and field.stable == stable
             ])
 
-        def is_whole_stable_owned_by_player(self, stable, player_name):
-            return self.number_of_horses_of_stable_owned_by_player(stable, player_name)\
-                == self.number_of_horses_of_stable(stable)
+        def is_whole_stable_owned_by_player(self, stable: int, player_name: str) -> bool:
+            return self.number_of_horses_of_stable_owned_by_player(stable, player_name) \
+                   == self.number_of_horses_of_stable(stable)
 
-        def number_of_trainers_already_owned_by_player(self, player_name):
+        def number_of_trainers_already_owned_by_player(self, player_name: str) -> int:
             return len([
                 field.owner_name == player_name
                 for field in self.__game.board
                 if isinstance(field, Trainer) and field.owner_name == player_name
             ])
 
-        def has_player_enough_money(self, amount):
+        def has_player_enough_money(self, amount: int) -> bool:
             return self.player_money >= amount
 
-        def is_property_owned_by_another_player(self, property):
-            return property.owner_name is not None\
-                and not self.is_property_owned_by_player(property)
+        def is_property_owned_by_another_player(self, property: Property) -> bool:
+            return property.owner_name is not None \
+                   and not self.is_property_owned_by_player(property)
 
-        def count_number_of_trainers_owned_by_player(self, player_name):
+        def count_number_of_trainers_owned_by_player(self, player_name: str) -> int:
             return sum(
                 isinstance(field, Trainer) and field.owner_name == player_name
                 for field in self.__game.board
             )
 
-        def is_player_suspended(self, player_name):
+        def is_player_suspended(self, player_name: str) -> bool:
             player = self.__find_player_with_name(player_name)
             return player.suspended
 
-        def move_player_to_field(self, field_index, receives_bonus=True):
+        def move_player_to_field(self, field_index: int, receives_bonus: bool = True):
             player = self.__game.current_player
             if player.position <= field_index:
                 steps = field_index - player.position
@@ -181,7 +194,7 @@ class Game:
                 steps = len(self.__game.board) - (player.position - field_index)
             self.__game.move_player(player, steps, receives_bonus)
 
-        def move_player_to_suspension_field(self, receives_bonus=True):
+        def move_player_to_suspension_field(self, receives_bonus: bool = True):
             suspension_index = [
                 i
                 for i, field
@@ -190,28 +203,28 @@ class Game:
             ][0]
             self.move_player_to_field(suspension_index, receives_bonus)
 
-        def buy_property_for_player(self, property):
+        def buy_property_for_player(self, property: Property):
             player = self.__game.current_player
             price = property.price
             self.transfer_player_money_to_bank(player, price)
             property.owner_name = player.name
             log_event(player, f"bought {property}")
 
-        def buy_new_race_for_player(self, horse):
+        def buy_new_race_for_player(self, horse: Horse):
             player = self.__game.current_player
             price = horse.new_race_price
             self.transfer_player_money_to_bank(player, price)
             horse.races += 1
             log_event(player, f"bought a new race for {horse}")
 
-        def pay_admission_to_another_player(self, receiver_name, amount, purpose):
+        def pay_admission_to_another_player(self, receiver_name: str, amount: int, purpose: str):
             player = self.__game.current_player
             receiver = self.__find_player_with_name(receiver_name)
             player.money -= amount
             receiver.money += amount
             log_event(player, f"paid {receiver_name} an admission of {amount} Kč for {purpose}")
 
-        def pay_fee_to_bank(self, amount, purpose):
+        def pay_fee_to_bank(self, amount: int, purpose: str):
             player = self.__game.current_player
             self.transfer_player_money_to_bank(player, amount)
             log_event(player, f"paid {amount} Kč for {purpose}")

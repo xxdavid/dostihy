@@ -8,6 +8,11 @@ import math
 
 
 class Tournament:
+    """
+    A tournament runner.
+    It runs a game for every possible combination of players and writes
+    the results to file ('./stats.txt').
+    """
     def __init__(self, number_of_players, set_length, strategies):
         self.number_of_players = number_of_players
         self.set_length = set_length

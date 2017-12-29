@@ -1,16 +1,26 @@
 from abc import ABC, abstractmethod
 
-from logger import log_event
+from game import Game
 
 
 class Field(ABC):
+    """
+    An abstract field on the board.
+    """
+
     @property
     @abstractmethod
     def name(self):
         pass
 
     @abstractmethod
-    def visit(self, controller):
+    def visit(self, controller: Game.Controller) -> bool:
+        """
+        Visit this field by the current player and perform associated actions.
+        (i.e. paying an admission.)
+        :param controller: game controller
+        :return: whether the the visit was handled (any action was performed)
+        """
         pass
 
     def __str__(self):
@@ -18,6 +28,10 @@ class Field(ABC):
 
 
 class Property(Field):
+    """
+    A field that can be bought and owned.
+    """
+
     def __init__(self, name, price):
         self._name = name
         self.owner_name = None
@@ -27,23 +41,33 @@ class Property(Field):
     def name(self):
         return self._name
 
-    def visit(self, controller):
+    def visit(self, controller: Game.Controller) -> bool:
         if self.owner_name is None and controller.has_player_enough_money(self.price):
             wanna_buy = controller.ask_player_whether_he_wants_property(self)
             if wanna_buy:
                 controller.buy_property_for_player(self)
             return True
+        return False
 
 
 class Horse(Property):
-    def __init__(self, name, price, stable, admissions, new_race_price):
+    """
+    A horse field.
+    Any horse can be bough.
+    If a player owns the whole stable, he can "upgrade" horses of that stable
+    by buying races.
+    If the horse has an owner and someone else visits it, he must pay an admission.
+    """
+
+    def __init__(self, name: str, price: int, stable: int, admissions: [int],
+                 new_race_price: int):
         super().__init__(name, price)
         self.stable = stable
         self.admissions = admissions
         self.races = 0
         self.new_race_price = new_race_price
 
-    def visit(self, controller):
+    def visit(self, controller: Game.Controller) -> bool:
         if super().visit(controller):
             return True
         if self.owner_name is not None:
@@ -72,6 +96,12 @@ class Horse(Property):
 
 
 class Trainer(Property):
+    """
+    A trainer field.
+    Any trainer can be bought.
+    The admission is calculated as 1000 times number of trainers owned.
+    """
+
     PRICE = 4000
     ADMISSIONS = [
         1000,
@@ -80,10 +110,10 @@ class Trainer(Property):
         4000
     ]
 
-    def __init__(self, trainer_number):
+    def __init__(self, trainer_number: int):
         super().__init__(f"Trainer {trainer_number}", 4000)
 
-    def visit(self, controller):
+    def visit(self, controller: Game.Controller) -> bool:
         if super().visit(controller):
             return True
         if controller.is_property_owned_by_another_player(self):
@@ -98,6 +128,11 @@ class Trainer(Property):
 
 
 class StartField(Field):
+    """
+    Start field.
+    Crossing the start field earns you 4000 Kč.
+    """
+
     @property
     def name(self):
         return "Start"
@@ -107,6 +142,10 @@ class StartField(Field):
 
 
 class ParkingLot(Field):
+    """
+    Parking lot field that does nothing.
+    """
+
     @property
     def name(self):
         return "Parking Lot"
@@ -116,6 +155,11 @@ class ParkingLot(Field):
 
 
 class VeterinaryCheckup(Field):
+    """
+    Veterinary checkup field.
+    Every player that visits this field has to pay an admission.
+    """
+
     def __init__(self, fee):
         self.fee = fee
 
@@ -123,17 +167,24 @@ class VeterinaryCheckup(Field):
     def name(self):
         return "Veterinary Checkup"
 
-    def visit(self, controller):
+    def visit(self, controller: Game.Controller) -> bool:
         controller.pay_fee_to_bank(self.fee, "a veterinary checkup")
+        return True
 
 
 class SuspensionField(Field):
+    """
+    A suspension field ("distanc").
+    Anyone stepping on this field stops there and every round he throws the dice
+    and doesn't leave the field until he throws 6.
+    """
     @property
     def name(self):
         return "Suspension"
 
-    def visit(self, controller):
+    def visit(self, controller: Game.Controller) -> bool:
         controller.suspend_player()
+        return True
 
 
 initialBoard = [

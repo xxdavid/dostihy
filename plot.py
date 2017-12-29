@@ -6,6 +6,14 @@ import re
 
 
 class Plotter(ABC):
+    """
+    An abstract plotter that draws a chart.
+    It loads the data (if it wasn't done before) and stores them in static variables.
+
+    Each plotter creates one charts.
+    Charts are saved in the 'charts' directory in png and svg format.
+    """
+
     ranks = None
     combinations = None
     set_length = None
@@ -78,6 +86,10 @@ class Plotter(ABC):
 class BarPlotter(Plotter):
     @abstractmethod
     def compute_values(self):
+        """
+        Compute the values for the chart.
+        :return: list of tuples in (x, y) format
+        """
         pass
 
     def init_plot(self):
@@ -95,6 +107,10 @@ class BarPlotter(Plotter):
 class LinePlotter(Plotter):
     @abstractmethod
     def compute_values(self):
+        """
+        Compute the values for the chart.
+        :return: list of tuples in (x, y) format
+        """
         pass
 
     def init_plot(self):

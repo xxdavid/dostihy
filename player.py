@@ -1,5 +1,10 @@
+from typing import Optional
+
+from strategies import Strategy
+
+
 class Player:
-    def __init__(self, name, strategy, color=None):
+    def __init__(self, name: str, strategy: Strategy, color: Optional[str] = None):
         self.name = name
         self.strategy = strategy
         self.money = 30000
@@ -7,7 +12,7 @@ class Player:
         self.color = color
         self.suspended = False
 
-    def pay(self, amount, receiver):
+    def pay(self, amount: int, receiver: 'Player'):
         self.money -= amount
         receiver.money += amount
 

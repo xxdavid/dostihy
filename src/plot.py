@@ -136,7 +136,7 @@ class WinsPlotter(BarPlotter):
 
     @property
     def x_label(self):
-        return "Strategies"
+        return "Strategy"
 
     @property
     def y_label(self):
@@ -159,7 +159,7 @@ class TiesPlotter(BarPlotter):
 
     @property
     def x_label(self):
-        return "Strategies"
+        return "Strategy"
 
     @property
     def y_label(self):

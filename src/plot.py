@@ -81,7 +81,7 @@ class Plotter(ABC):
         plt.savefig(f"../charts/{self.name}.png")
         plt.savefig(f"../charts/{self.name}.svg")
         plt.savefig(f"../charts/{self.name}.pdf")
-        plt.clf()
+        plt.close()
 
 
 class BarPlotter(Plotter):

@@ -11,7 +11,7 @@ class Plotter(ABC):
     It loads the data (if it wasn't done before) and stores them in static variables.
 
     Each plotter creates one charts.
-    Charts are saved in the 'charts' directory in png and svg format.
+    Charts are saved in the 'charts' directory in png, svg and pdf format.
     """
 
     ranks = None
@@ -80,6 +80,7 @@ class Plotter(ABC):
 
         plt.savefig(f"../charts/{self.name}.png")
         plt.savefig(f"../charts/{self.name}.svg")
+        plt.savefig(f"../charts/{self.name}.pdf")
         plt.clf()
 
 

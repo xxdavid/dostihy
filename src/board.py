@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 
 
-
 class Field(ABC):
     """
     An abstract field on the board.
@@ -80,7 +79,7 @@ class Horse(Property):
                 )
                 return True
             elif self.races < 5:  # owned by the player
-                owns_the_whole_stable =\
+                owns_the_whole_stable = \
                     controller.is_whole_stable_owned_by_player(
                         self.stable, self.owner_name
                     )
@@ -116,7 +115,7 @@ class Trainer(Property):
         if super().visit(controller):
             return True
         if controller.is_property_owned_by_another_player(self):
-            number_of_trainers_owned =\
+            number_of_trainers_owned = \
                 controller.count_number_of_trainers_owned_by_player(self.owner_name)
             admission = self.ADMISSIONS[number_of_trainers_owned - 1]
             controller.pay_admission_to_another_player(
@@ -177,6 +176,7 @@ class SuspensionField(Field):
     Anyone stepping on this field stops there and every round he throws the dice
     and doesn't leave the field until he throws 6.
     """
+
     @property
     def name(self):
         return "Suspension"
